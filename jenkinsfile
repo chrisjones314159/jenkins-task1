@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    stages {
+        stage('Cleanup'){
+            steps {
+                sh "sh cleanup.sh || true"
+            }
+        }
+
+        stage('Create Network'){
+            steps {
+                sh "docker network create flask"
+            }
+        }
+
+        stage('Build the Flask & Nginx image'){
+            steps {
+                sh "docker build -t flask-app -f Dockerfile . --no-cache"
+                sh "docker build -t nginx -f DockerfileNginx . --no-cache"
+            }
+        }
+
+        stage('Run the containers'){
+            steps {
+                sh "docker run -d --network flask --name flask-app flask-app"
+                sh "docker run -d -p 80:80 --network flask --name nginx nginx"
+            }
+        }
+    }
+}
