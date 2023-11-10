@@ -24,6 +24,8 @@ pipeline {
             steps {
                 sh "docker run -d --network flask --name flask-app flask-app"
                 sh "docker run -d -p 80:80 --network flask --name nginx nginx"
+                sh "docker tag flask-app chrisjones3141/test"
+                sh "docker push chrisjones3141/test"
             }
         }
     }
